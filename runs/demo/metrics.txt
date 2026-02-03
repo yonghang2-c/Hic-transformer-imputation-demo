@@ -1,0 +1,23 @@
+=== Model (MAE+RPB+uncertainty+insulation+distance-weight) ===
+masked_RMSE=0.4691
+masked_Pearson=0.9598
+insulation_Pearson=0.9403
+distance_binned_RMSE:
+  bin0_upper0: 1.4767924547195435
+  bin1_upper1: 0.4981997013092041
+  bin2_upper2: 0.35583922266960144
+  bin3_upper5: 0.36845287680625916
+  bin4_upper11: 0.4434453845024109
+  bin5_upper25: 0.48988717794418335
+  bin6_upper57: 0.5087673664093018
+  bin7_upper127: 0.36039113998413086
+
+=== Baselines (on same masked region) ===
+baseline_no_enhance_RMSE=2.0766  Pearson=0.9648
+baseline_smooth_RMSE=2.0971     Pearson=0.9621
+
+=== False-positive control (no loops/no TAD) ===
+spurious_hotspot_score (mean top-k positive residuals off-diagonal; lower is better)
+model=1.0326
+baseline_no_enhance=-0.6889
+baseline_smooth=-0.6769
