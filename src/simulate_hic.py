@@ -6,32 +6,18 @@ def _smooth1d(x, k=9):
     return np.convolve(x, w, mode="same")
 
 def simulate_hic_map(n=128, seed=42, enable_tad=True, enable_loops=True):
-    """
-    Simulate a symmetric Hi-C intensity map with:
-    - distance decay
-    - A/B compartments
-    - (optional) TAD blocks
-    - (optional) loops (hotspots)
-
-    Returns:
-      X_int: (n,n) float32 nonnegative intensity
-      meta: dict with ab, cuts, loop_pairs
-    """
     rng = np.random.default_rng(seed)
     idx = np.arange(n)
     dist = np.abs(idx[:, None] - idx[None, :]).astype(np.float32) + 1.0
 
-    # distance decay baseline
     alpha = 1.2 + 0.3 * rng.random()
     base = 2.5 / (dist ** alpha)
 
-    # compartments (A/B): low-frequency sign pattern
     ab = rng.normal(size=n).astype(np.float32)
     ab = _smooth1d(ab, k=max(9, n // 8))
-    ab = np.sign(ab + 1e-6).astype(np.float32)  # +/-1
+    ab = np.sign(ab + 1e-6).astype(np.float32)
     comp = 1.0 + 0.35 * (ab[:, None] * ab[None, :])
 
-    # TAD blocks
     cuts = [0, n]
     tad = np.ones((n, n), dtype=np.float32)
     if enable_tad:
@@ -41,9 +27,7 @@ def simulate_hic_map(n=128, seed=42, enable_tad=True, enable_loops=True):
         for a, b in zip(cuts[:-1], cuts[1:]):
             tad[a:b, a:b] += 0.8 + 0.5 * rng.random()
 
-    # loops: sparse hotspots
     loops = np.zeros((n, n), dtype=np.float32)
-    loop_pairs = []
     if enable_loops:
         n_loops = int(rng.integers(8, 20))
         for _ in range(n_loops):
@@ -54,19 +38,13 @@ def simulate_hic_map(n=128, seed=42, enable_tad=True, enable_loops=True):
             amp = 3.0 + 4.0 * rng.random()
             loops[i, j] += amp
             loops[j, i] += amp
-            loop_pairs.append((min(i, j), max(i, j)))
 
     X = base * comp * tad + loops
     X = (X + X.T) / 2.0
     X = np.clip(X, 0, None).astype(np.float32)
-
-    meta = {"ab": ab, "cuts": cuts, "loop_pairs": loop_pairs}
-    return X, meta
+    return X, {"ab": ab, "cuts": cuts}
 
 def poisson_counts(X_intensity, depth=3e6, seed=42):
-    """
-    Convert intensity -> counts via Poisson sampling.
-    """
     rng = np.random.default_rng(seed)
     P = X_intensity / (X_intensity.sum() + 1e-12)
     lam = P * float(depth)
