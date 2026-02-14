@@ -153,11 +153,12 @@ A “conservative” run is chosen by a lower **spurious hotspot control score**
 
 ---
 
+```md
 ## Example outputs (place in `figures/` for GitHub display)
 
 Then the images can be displayed on GitHub as:
 
-```md
+```
 ![Best imputation](./figures/imputation_best.png)
 
 ![Best insulation](./figures/insulation_best.png)
