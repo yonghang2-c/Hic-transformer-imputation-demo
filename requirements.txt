@@ -1,0 +1,15 @@
+# Core
+numpy
+scipy
+pandas
+
+# ML / Torch
+torch
+torchvision
+
+# Plotting
+matplotlib
+
+# Utils
+tqdm
+pyyaml

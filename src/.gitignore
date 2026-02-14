@@ -5,3 +5,27 @@ __pycache__/
 .env/
 
 runs/
+
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+
+# Env / venv
+venv/
+env/
+.conda/
+*.log
+
+# macOS
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/

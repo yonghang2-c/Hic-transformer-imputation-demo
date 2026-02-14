@@ -182,7 +182,7 @@ This codebase is intended as a demonstration of a method-development workflow (s
 
 ## License
 
-Choose a license (MIT/Apache-2.0). MIT is a common default for demos.
+MIT License. See `LICENSE`.
 
 ---
 
