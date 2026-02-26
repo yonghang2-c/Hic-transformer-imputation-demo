@@ -7,7 +7,6 @@ The key idea is to turn Hi-C enhancement into a true **imputation (inpainting)**
 ---
 
 ## Method at a glance
-
 End-to-end workflow for **Mechanism-aware Transformer-MAE Imputation** in this demo: simulate sparse Hi-C, apply mechanism-aware masking, inpaint with Transformer-MAE, and evaluate accuracy/structure/calibration.
 
 simulate → downsample → mask (random / dist / mixed) → Transformer-MAE inpainting → metrics (RMSE / insulation / coverage / hotspot)
