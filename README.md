@@ -83,7 +83,8 @@ CUDA users: install PyTorch via the official selector, then run `pip install -r 
 
 ### Option A: conda (recommended)
 
-```bash
+```
+bash
 conda create -n hicdemo python=3.10 -y
 conda activate hicdemo
 pip install torch
@@ -92,7 +93,8 @@ pip install -r requirements.txt
 
 ### Option B: venv
 
-```bash
+```
+bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install torch
@@ -107,7 +109,8 @@ Note: If you use a CUDA GPU, install PyTorch using the official PyTorch selector
 
 ### 1) Train a single run (recommended default: mechanism-aware mixed masking)
 
-```bash
+```
+bash
 RUN_DIR=$(
   python -m src.train \
     --patch 4 --mask_ratio 0.4 \
@@ -124,6 +127,7 @@ echo "RUN_DIR=$RUN_DIR"
 Expected terminal output (example):
 
 ```
+bash
 Done. Run directory: runs/<run_name>
 RUN_DIR=runs/<run_name>
 ```
@@ -134,7 +138,8 @@ Expected artifacts after training (in `$RUN_DIR/`):
 
 ### 2) Evaluate
 
-```bash
+```
+bash
 python -m src.eval --run_dir "$RUN_DIR"
 ```
 
@@ -172,7 +177,8 @@ A short summary of the 8-run mini-sweep and the selected configuration is provid
 
 To reproduce the 8-run mini-sweep:
 
-```bash
+```
+bash
 chmod +x sweep8.sh
 ./sweep8.sh
 ```
