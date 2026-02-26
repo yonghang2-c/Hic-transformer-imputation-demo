@@ -1,20 +1,24 @@
 # Hi-C Transformer-MAE Imputation Demo — Summary (8-run mini-sweep)
 
 ## Best run (selected)
-**Goal:** best trade-off between **masked accuracy** and **structure preservation**.
+**Selection rule (8 runs):** prioritize **structure preservation** first, then minimize **masked error**.  
+Concretely: choose runs with high `insulation_Pearson`, then pick the one with the lowest `masked_RMSE` among them.
+
+**Takeaway:** distance-biased masking (`mask_mode=dist`) + light insulation regularization yields **high structural fidelity** while keeping **masked error low**, with **reasonable uncertainty calibration**.
 
 ### Configuration
-| Item | Value |
-|---|---|
-| mask_mode | `dist` (distance-biased missingness) |
-| dist_k | 3.0 |
-| patch | 4 |
-| mask_ratio | 0.4 |
-| lambda_insul | 0.02 |
-| beta_l1 | 0.1 |
-| dist_gamma | 0.5 |
+| Item | Value | Note |
+|---|---|---|
+| mask_mode | `dist` | distance-biased missingness |
+| dist_k | 3.0 | strength/scale of distance bias |
+| dist_gamma | 0.5 | distance decay exponent |
+| patch | 4 | patch size |
+| mask_ratio | 0.4 | fraction masked |
+| lambda_insul | 0.02 | insulation proxy regularization |
+| beta_l1 | 0.1 | sparsity / denoising term |
 
 ## Results
+
 ### Primary metrics
 | Metric | Value | Interpretation |
 |---|---:|---|
@@ -24,12 +28,12 @@
 | spurious_hotspot_control (topk\|resid\|) | **1.0072** | ~1.0 indicates residual hotspots are controlled |
 
 ### Baselines (for reference)
-| Baseline | masked_RMSE |
-|---|---:|
-| no-enhance | 2.0346 |
-| smooth | 2.0393 |
+| Baseline | masked_RMSE | Note |
+|---|---:|---|
+| no-enhance | 2.0346 | baseline only (no reconstruction) |
+| smooth | 2.0393 | simple smoothing baseline |
 
 ## Notes
-- `coverage95` computed using Gaussian interval: **μ ± 1.96σ**.
-- `spurious_hotspot_control` is reported as a **ratio** (closer to 1.0 is better).
-
+- `coverage95` uses a Gaussian interval: **μ ± 1.96σ** (target coverage = 0.95).
+- `spurious_hotspot_control` is a **ratio** (closer to 1.0 is better).
+- Baselines report `masked_RMSE` only; other metrics are model-specific in this demo.

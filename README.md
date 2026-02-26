@@ -6,7 +6,17 @@ The key idea is to turn Hi-C enhancement into a true **imputation (inpainting)**
 
 ---
 
-## What is Hi-C (in one paragraph)
+## Method at a glance
+
+End-to-end workflow for **Mechanism-aware Transformer-MAE Imputation** in this demo: simulate sparse Hi-C, apply mechanism-aware masking, inpaint with Transformer-MAE, and evaluate accuracy/structure/calibration.
+
+simulate → downsample → mask (random / dist / mixed) → Transformer-MAE inpainting → metrics (RMSE / insulation / coverage / hotspot)
+
+![pipeline](figures/pipeline.png)
+
+---
+
+## What is Hi-C 
 
 Hi-C measures the **3D proximity** between genomic regions by sequencing ligated DNA fragments that were physically close in the nucleus. The output is a **contact map** (a symmetric matrix), where entry *(i, j)* reflects how frequently genomic bins *i* and *j* are observed to contact each other. Hi-C maps show characteristic patterns such as **distance decay**, **A/B compartments**, **TADs**, and **loops**.
 
@@ -24,7 +34,7 @@ Recovering high-quality maps from sparse observations is a natural **missing-dat
 
 ---
 
-## Key contributions / novelty (demo)
+## Key contributions / novelty
 
 ### 1) Mechanism-aware masking (missingness mechanism)
 Hi-C sparsity is **not MCAR**: long-range contacts are typically rarer.  
@@ -47,7 +57,7 @@ We test “hallucination risk” on synthetic maps generated **without loops/TAD
 
 ---
 
-## Project structure
+## Demo structure
 
 - `src/simulate_hic.py`  
   Synthetic Hi-C generator (distance decay + compartments + optional TADs + optional loops).
@@ -62,13 +72,21 @@ We test “hallucination risk” on synthetic maps generated **without loops/TAD
 
 ---
 
-## Installation (macOS)
+## Environment tested
+
+Tested on **macOS (Apple Silicon)** with **Python 3.10** and **PyTorch 2.x** (conda/venv both supported).  
+CUDA users: install PyTorch via the official selector, then run `pip install -r requirements.txt`.
+
+---
+
+## Installation
 
 ### Option A: conda (recommended)
 
 ```bash
 conda create -n hicdemo python=3.10 -y
 conda activate hicdemo
+pip install torch
 pip install -r requirements.txt
 ```
 
@@ -77,8 +95,11 @@ pip install -r requirements.txt
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+pip install torch
 pip install -r requirements.txt
 ```
+
+Note: If you use a CUDA GPU, install PyTorch using the official PyTorch selector, then run pip install -r requirements.txt.
 
 ---
 
@@ -87,33 +108,53 @@ pip install -r requirements.txt
 ### 1) Train a single run (recommended default: mechanism-aware mixed masking)
 
 ```bash
-python -m src.train \
-  --patch 4 --mask_ratio 0.4 \
-  --mask_mode mixed --mixed_prob 0.7 --dist_k 3.0 \
-  --lambda_insul 0.02 --beta_l1 0.1 \
-  --dist_gamma 0.5 --epochs 30 --seed 104
+RUN_DIR=$(
+  python -m src.train \
+    --patch 4 --mask_ratio 0.4 \
+    --mask_mode mixed --mixed_prob 0.7 --dist_k 3.0 \
+    --lambda_insul 0.02 --beta_l1 0.1 \
+    --dist_gamma 0.5 --epochs 30 --seed 104 \
+  | tee train.log \
+  | sed -n 's/.*Run directory:[[:space:]]*//p' \
+  | tail -n 1
+)
+echo "RUN_DIR=$RUN_DIR"
 ```
 
-The training script prints a run directory, e.g.:
+Expected terminal output (example):
 
 ```
 Done. Run directory: runs/<run_name>
+RUN_DIR=runs/<run_name>
 ```
+Expected artifacts after training (in `$RUN_DIR/`):
+- `cfg.json` — run configuration
+- `model.pt` — best checkpoint
+- `train_log.json` — training curve (val loss)
 
 ### 2) Evaluate
 
 ```bash
-python -m src.eval --run_dir runs/<run_name>
+python -m src.eval --run_dir "$RUN_DIR"
 ```
 
-Outputs in the run directory:
+Expected artifacts after evaluation (in $RUN_DIR/):
 - `metrics.txt` / `metrics.json`
-- `imputation_4panel.png` (true / input-with-holes / pred / masked-error)
-- `insulation_profile.png`
+- `imputation_best.png` (true / input-with-holes / pred / masked-error)
+- `insulation_best.png`
 
 ---
 
-## Lightweight hyperparameter tuning (demo)
+## Reproducibility
+
+- **Train seed:** controlled by `--seed` in `src.train` (calls `set_seed(seed)` and also passes the same seed into the synthetic data generator / loaders).
+- **Eval seed:** controlled by `--seed` in `src.eval`. This seed mainly affects the **random masking** used during evaluation (MAE inpainting mask).
+- **Fixed eval datasets:** for stable comparisons, `src.eval` uses fixed dataset seeds (`seed=123` for the main evaluation sample and `seed=999` for the no-loop/no-TAD control map). This keeps the synthetic data fixed while testing model behavior.
+- **Determinism:** this demo is **not strictly deterministic** across different hardware/backends (CPU vs CUDA vs Apple MPS) and PyTorch versions. With the same seeds, results should be very similar, but small numerical differences may occur.
+
+---
+
+## Lightweight hyperparameter tuning
 
 This repository is a **demo / portfolio artifact**, not a full benchmark paper.
 To improve qualitative outputs and stability, we performed a **small 8-run sweep** over a few key hyperparameters:
@@ -123,7 +164,7 @@ To improve qualitative outputs and stability, we performed a **small 8-run sweep
 - structure regularization: `lambda_insul`
 - peak-preserving term: `beta_l1`
 
-Each run outputs `metrics.txt/metrics.json` and the imputation visualization (`imputation_4panel.png`).
+Each run outputs `metrics.txt/metrics.json` and the imputation visualization (`imputation_best.png`, `insulation_best.png`).
 Selection is based primarily on **masked RMSE**, with secondary checks on **insulation correlation**, **95% coverage calibration**, and **false-positive control**.
 
 A short summary of the 8-run mini-sweep and the selected configuration is provided in:
@@ -157,11 +198,14 @@ A “conservative” run is chosen by a lower **spurious hotspot control score**
 
 Then the images can be displayed on GitHub as:
 
-[Best imputation]![imputation_best.png](figures%20/imputation_best.png)
+[Best imputation]
+![imputation_best.png](figures/imputation_best.png)
 
-[Best insulation]![insulation_best.png](figures%20/insulation_best.png)
+[Best insulation]
+![insulation_best.png](figures/insulation_best.png)
 
-[Conservative imputation]![imputation_conservative.png](figures%20/imputation_conservative.png)
+[Conservative imputation]
+![imputation_conservative.png](figures/imputation_conservative.png)
 
 ---
 
@@ -171,6 +215,12 @@ Then the images can be displayed on GitHub as:
 - **distance_binned_RMSE**: RMSE stratified by genomic distance bins.
 - **coverage95**: fraction of masked pixels where the true value lies within `mu ± 1.96 * sigma`.
 - **spurious hotspot control**: top-k absolute residual magnitude off-diagonal on maps generated without loops/TADs.
+
+### Why these metrics?
+
+- Masked RMSE/pearson evaluate reconstruction **only on missing entries**, matching the imputation objective.
+- Insulation correlation is a proxy for preserving **domain-scale chromatin organization** (TAD boundary-like structure).
+- Coverage95 + hotspot control help detect **overconfident hallucinations** (false-positive loops / off-diagonal artifacts).
 
 ---
 

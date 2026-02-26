@@ -1,15 +1,3 @@
-# Core
-numpy
-scipy
-pandas
-
-# ML / Torch
-torch
-torchvision
-
-# Plotting
-matplotlib
-
-# Utils
-tqdm
-pyyaml
+numpy>=1.23
+tqdm>=4.66
+matplotlib>=3.7
