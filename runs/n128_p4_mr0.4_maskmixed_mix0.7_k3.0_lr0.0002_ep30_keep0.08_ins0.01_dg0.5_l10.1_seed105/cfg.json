@@ -1,0 +1,38 @@
+{
+  "seed": 105,
+  "n_maps": 400,
+  "n": 128,
+  "depth_true": 3000000.0,
+  "keep_rate": 0.08,
+  "batch_size": 8,
+  "epochs": 30,
+  "lr": 0.0002,
+  "lambda_insul": 0.01,
+  "beta_l1": 0.1,
+  "patch": 4,
+  "mask_ratio": 0.4,
+  "mask_mode": "mixed",
+  "mixed_prob": 0.7,
+  "dist_k": 3.0,
+  "dist_bins": 6,
+  "dist_gamma": 0.5,
+  "device": "cpu",
+  "dist_edges": [
+    0,
+    1,
+    2,
+    5,
+    11,
+    25,
+    57,
+    127
+  ],
+  "model": {
+    "enc_dim": 256,
+    "enc_depth": 6,
+    "enc_heads": 8,
+    "dec_dim": 192,
+    "dec_depth": 4,
+    "dec_heads": 6
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "masked_RMSE": 0.36298704147338867,
+  "masked_Pearson": 0.9740320444107056,
+  "insulation_Pearson": 0.9868137408961484,
+  "coverage95": 0.9604217603911981,
+  "distance_binned_RMSE": [
+    {
+      "bin": 0,
+      "upper": 0,
+      "rmse": 0.6448270082473755
+    },
+    {
+      "bin": 1,
+      "upper": 1,
+      "rmse": 0.19117511808872223
+    },
+    {
+      "bin": 2,
+      "upper": 2,
+      "rmse": 0.17756564915180206
+    },
+    {
+      "bin": 3,
+      "upper": 5,
+      "rmse": 0.28994929790496826
+    },
+    {
+      "bin": 4,
+      "upper": 11,
+      "rmse": 0.3015252947807312
+    },
+    {
+      "bin": 5,
+      "upper": 25,
+      "rmse": 0.34316888451576233
+    },
+    {
+      "bin": 6,
+      "upper": 57,
+      "rmse": 0.40283751487731934
+    },
+    {
+      "bin": 7,
+      "upper": 127,
+      "rmse": 0.36097338795661926
+    }
+  ],
+  "distance_binned_coverage95": [
+    {
+      "bin": 0,
+      "upper": 0,
+      "coverage": 1.0
+    },
+    {
+      "bin": 1,
+      "upper": 1,
+      "coverage": 1.0
+    },
+    {
+      "bin": 2,
+      "upper": 2,
+      "coverage": 1.0
+    },
+    {
+      "bin": 3,
+      "upper": 5,
+      "coverage": 0.9514925479888916
+    },
+    {
+      "bin": 4,
+      "upper": 11,
+      "coverage": 0.9558823704719543
+    },
+    {
+      "bin": 5,
+      "upper": 25,
+      "coverage": 0.9669148325920105
+    },
+    {
+      "bin": 6,
+      "upper": 57,
+      "coverage": 0.9468623399734497
+    },
+    {
+      "bin": 7,
+      "upper": 127,
+      "coverage": 0.9667530059814453
+    }
+  ],
+  "spurious_hotspot_control": 1.010391116142273,
+  "baseline_no_enhance_masked_RMSE": 2.0456206798553467,
+  "baseline_smooth_masked_RMSE": 2.0513739585876465,
+  "mask_mode": "dist",
+  "mixed_prob": 0.7,
+  "dist_k": 2.0
+}

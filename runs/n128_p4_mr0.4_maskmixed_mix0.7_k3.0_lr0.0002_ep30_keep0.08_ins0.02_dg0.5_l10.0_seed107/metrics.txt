@@ -1,0 +1,30 @@
+=== Model (Mechanism-aware MAE Imputation) ===
+mask_mode=mixed mixed_prob=0.7 dist_k=3.0
+masked_RMSE=0.3724
+masked_Pearson=0.9745
+insulation_Pearson=0.9610
+coverage95=0.9659
+distance_binned_RMSE:
+  bin0_upper0: 0.7810260057449341
+  bin1_upper1: 0.20761790871620178
+  bin2_upper2: 0.2495163530111313
+  bin3_upper5: 0.33395645022392273
+  bin4_upper11: 0.3709464967250824
+  bin5_upper25: 0.38914018869400024
+  bin6_upper57: 0.3735957741737366
+  bin7_upper127: 0.36280596256256104
+distance_binned_coverage95:
+  bin0_upper0: 1.0
+  bin1_upper1: 0.9814814925193787
+  bin2_upper2: 0.9523809552192688
+  bin3_upper5: 0.9644013047218323
+  bin4_upper11: 0.9641109108924866
+  bin5_upper25: 0.967576801776886
+  bin6_upper57: 0.9657500982284546
+  bin7_upper127: 0.964928925037384
+
+spurious_hotspot_control(topk|resid|)=0.9695
+
+=== Baselines (masked RMSE) ===
+no_enhance=2.0676
+smooth=2.0778
